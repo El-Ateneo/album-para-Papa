@@ -51,7 +51,6 @@
             100% { transform: translateY(105vh) rotate(720deg); }
         }
 
-        /* CONTENEDOR 100% TRANSPARENTE SOLICITADO */
         .container {
             background-color: transparent; 
             width: 100%;
@@ -158,6 +157,7 @@
         .preview-item {
             position: relative; width: 100%; aspect-ratio: 1 / 1; border-radius: 8px;
             overflow: hidden; border: 2px solid var(--blanco); box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            cursor: pointer; /* Indica que se puede hacer clic para agrandar */
         }
 
         .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -198,6 +198,17 @@
         .alert-box h3 { color: #FFE066; margin-bottom: 10px; text-transform: uppercase; font-size: 16px;}
         .alert-box p { color: white; font-size: 13px; line-height: 1.4; margin-bottom: 20px; }
         .alert-btn { background: linear-gradient(135deg, #FFE066, var(--dorado)); color: var(--oscuro); border: none; padding: 10px 22px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+
+        /* NUEVOS ESTILOS PARA EL VISOR DE FOTO COMPLETA */
+        .viewer-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column;
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .viewer-img { max-width: 100%; max-height: 70vh; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); object-fit: contain; }
+        .viewer-actions { display: flex; gap: 15px; margin-top: 20px; width: 100%; max-width: 300px; }
+        .btn-viewer-close { flex: 1; background-color: #6c757d; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; text-transform: uppercase;}
+        .btn-viewer-delete { flex: 1; background-color: #dc3545; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; text-transform: uppercase;}
     </style>
 </head>
 <body>
@@ -216,7 +227,7 @@
 
         <form id="posterForm">
             <div class="form-group">
-                <label browser-default for="cliente">Tu Nombre / Hijos (Quién regala)</label>
+                <label for="cliente">Tu Nombre / Hijos (Quién regala)</label>
                 <input type="text" id="cliente" required placeholder="Ej: Tomás, Sofía y mamá">
             </div>
 
@@ -249,6 +260,15 @@
 
             <button type="submit" id="submitBtn" class="btn-submit" disabled>Enviar Fotos</button>
         </form>
+    </div>
+
+    <!-- NUEVO VISOR INTERACTIVO EN PANTALLA COMPLETA -->
+    <div id="imageViewer" class="viewer-overlay">
+        <img id="viewerImg" class="viewer-img" src="" alt="Vista previa grande">
+        <div class="viewer-actions">
+            <button type="button" class="btn-viewer-close" onclick="cerrarVisor()">Volver</button>
+            <button type="button" id="btnViewerDelete" class="btn-viewer-delete">Eliminar</button>
+        </div>
     </div>
 
     <div id="loadingOverlay" class="overlay">
@@ -286,6 +306,8 @@
         }
 
         let listaFotosAcumuladas = []; 
+        let fotoSeleccionadaIndex = null; // Para rastrear qué foto está mirando en grande
+
         const fileInput = document.getElementById('fotos');
         const fileCounter = document.getElementById('fileCounter');
         const counterText = document.getElementById('counterText');
@@ -297,8 +319,13 @@
         const loadingText = document.getElementById('loadingText');
         const realProgressBar = document.getElementById('realProgressBar');
 
-        // ⚠️ REEMPLAZÁ ESTA URL POR LA DE TU NUEVO SCRIPT
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxHr1OXlNRYTRrc7Wl4nLiwCfRncOD73nyJyEOiWbik5017SDQ6Lo24sG7dqrdilh9g/exec"; 
+        // Elementos del nuevo visor
+        const imageViewer = document.getElementById('imageViewer');
+        const viewerImg = document.getElementById('viewerImg');
+        const btnViewerDelete = document.getElementById('btnViewerDelete');
+
+        // ⚠️ DEJA PUESTA ACÁ LA URL DE TU SCRIPT PARA EL PÚBLICO GENERAL
+        const WEB_APP_URL = "ACA_VA_EL_URL_DE_TU_NUEVO_SCRIPT"; 
 
         function mostrarAlerta(titulo, mensaje) {
             document.getElementById('alertTitle').textContent = titulo;
@@ -307,6 +334,27 @@
         }
 
         function cerrarAlerta() { document.getElementById('customAlert').style.display = 'none'; }
+
+        // Funciones del Visor
+        function abrirVisor(index) {
+            fotoSeleccionadaIndex = index;
+            viewerImg.src = URL.createObjectURL(listaFotosAcumuladas[index]);
+            imageViewer.style.display = 'flex';
+        }
+
+        function cerrarVisor() {
+            imageViewer.style.display = 'none';
+            fotoSeleccionadaIndex = null;
+        }
+
+        btnViewerDelete.addEventListener('click', () => {
+            if (fotoSeleccionadaIndex !== null) {
+                listaFotosAcumuladas.splice(fotoSeleccionadaIndex, 1);
+                cerrarVisor();
+                renderizarMosaico();
+                actualizarInterfazContador();
+            }
+        });
 
         fileInput.addEventListener('change', function() {
             const nuevosArchivos = Array.from(this.files);
@@ -337,13 +385,23 @@
             listaFotosAcumuladas.forEach((file, index) => {
                 const item = document.createElement('div');
                 item.classList.add('preview-item');
+                
+                // Al hacer clic en la foto, se abre el visor en grande
+                item.addEventListener('click', (e) => {
+                    if(e.target.classList.contains('btn-remove')) return; 
+                    abrirVisor(index);
+                });
+
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file); 
+                
                 const btnRemove = document.createElement('button');
                 btnRemove.type = 'button'; btnRemove.classList.add('btn-remove'); btnRemove.textContent = 'X';
-                btnRemove.addEventListener('click', () => {
+                btnRemove.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Evita que se abra el visor al borrar desde la grilla
                     listaFotosAcumuladas.splice(index, 1); renderizarMosaico(); actualizarInterfazContador();
                 });
+                
                 item.appendChild(img); item.appendChild(btnRemove); previewGrid.appendChild(item);
             });
         }
@@ -424,7 +482,13 @@
                     realProgressBar.style.width = `${porcentajeProgreso}%`;
                 }
 
-                mostrarAlerta('¡Envío Exitoso!', `¡Muchas gracias! Tu pedido para el papá ${papa} se cargó correctamente. Nos comunicaremos al WhatsApp ingresado.`);
+                // --- 🌟 CAMBIO DE FRASE COMERCIAL: MÁS EMOCIONAL Y CÁLIDA 🌟 ---
+                mostrarAlerta(
+                    '¡Recibimos todo impecable! ❤️', 
+                    `¡Excelente! Las ${totalFotos} fotitos para homenajear a "${papa}" ya se guardaron de manera segura en nuestro taller de diseño.\n\n` +
+                    `Ahora nos ponemos manos a la obra para armar un regalo espectacular. Nos estaremos comunicado con vos al WhatsApp (${telefono}) para coordinar los detalles. ¡Gracias por confiar en nosotros para este día tan especial!`
+                );
+                
                 form.reset(); listaFotosAcumuladas = []; renderizarMosaico(); actualizarInterfazContador();
             } catch (error) {
                 console.error(error);
