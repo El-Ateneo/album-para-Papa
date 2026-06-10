@@ -157,17 +157,24 @@
         .preview-item {
             position: relative; width: 100%; aspect-ratio: 1 / 1; border-radius: 8px;
             overflow: hidden; border: 2px solid var(--blanco); box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-            cursor: pointer; /* Indica que se puede hacer clic para agrandar */
+            cursor: pointer;
         }
 
         .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+        /* BOTÓN DE TACHO ANIMADO EN LA GRILLA */
         .preview-item .btn-remove {
-            position: absolute; top: 4px; right: 4px; background-color: #dc3545;
-            color: white; border: 1px solid white; width: 22px; height: 22px;
-            font-size: 11px; font-weight: bold; border-radius: 50%; cursor: pointer;
+            position: absolute; top: 5px; right: 5px; background-color: rgba(220, 53, 69, 0.95);
+            color: white; border: 1px solid white; width: 26px; height: 26px;
+            border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center; z-index: 5;
+            transition: transform 0.2s ease, background-color 0.2s ease;
         }
+        .preview-item .btn-remove:active, .preview-item .btn-remove:hover {
+            transform: scale(1.15) rotate(10deg);
+            background-color: #dc3545;
+        }
+        .trash-svg { width: 14px; height: 14px; fill: white; }
 
         .btn-submit {
             width: 100%; background: linear-gradient(135deg, #222, #444); color: var(--blanco);
@@ -196,19 +203,32 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.7); text-align: center;
         }
         .alert-box h3 { color: #FFE066; margin-bottom: 10px; text-transform: uppercase; font-size: 16px;}
-        .alert-box p { color: white; font-size: 13px; line-height: 1.4; margin-bottom: 20px; }
+        .alert-box p { color: white; font-size: 13px; line-height: 1.5; margin-bottom: 20px; white-space: pre-line; }
         .alert-btn { background: linear-gradient(135deg, #FFE066, var(--dorado)); color: var(--oscuro); border: none; padding: 10px 22px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-        /* NUEVOS ESTILOS PARA EL VISOR DE FOTO COMPLETA */
+        /* ESTILOS DEL VISOR GRANDE CON NUEVOS BOTONES ICONOGRÁFICOS */
         .viewer-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column;
             justify-content: center; align-items: center; padding: 20px;
         }
         .viewer-img { max-width: 100%; max-height: 70vh; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); object-fit: contain; }
-        .viewer-actions { display: flex; gap: 15px; margin-top: 20px; width: 100%; max-width: 300px; }
-        .btn-viewer-close { flex: 1; background-color: #6c757d; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; text-transform: uppercase;}
-        .btn-viewer-delete { flex: 1; background-color: #dc3545; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; text-transform: uppercase;}
+        .viewer-actions { display: flex; gap: 20px; margin-top: 25px; width: 100%; max-width: 260px; justify-content: center; }
+        
+        .btn-viewer-round {
+            width: 55px; height: 55px; border-radius: 50%; border: none; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-viewer-round:active { transform: scale(0.9); }
+
+        .btn-viewer-close { background-color: #6c757d; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-viewer-close:hover { transform: scale(1.08); background-color: #5a6268; }
+        
+        .btn-viewer-delete { background-color: #dc3545; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-viewer-delete:hover { transform: scale(1.08) rotate(-5deg); background-color: #bd2130; }
+
+        .viewer-svg { width: 22px; height: 22px; fill: white; }
     </style>
 </head>
 <body>
@@ -262,12 +282,22 @@
         </form>
     </div>
 
-    <!-- NUEVO VISOR INTERACTIVO EN PANTALLA COMPLETA -->
+    <!-- VISOR INTERACTIVO EN PANTALLA COMPLETA CON ICONOS REDONDOS -->
     <div id="imageViewer" class="viewer-overlay">
         <img id="viewerImg" class="viewer-img" src="" alt="Vista previa grande">
         <div class="viewer-actions">
-            <button type="button" class="btn-viewer-close" onclick="cerrarVisor()">Volver</button>
-            <button type="button" id="btnViewerDelete" class="btn-viewer-delete">Eliminar</button>
+            <!-- Botón de regresar (Flecha) -->
+            <button type="button" class="btn-viewer-round btn-viewer-close" onclick="cerrarVisor()" title="Regresar">
+                <svg class="viewer-svg" viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </button>
+            <!-- Botón de eliminar (Tacho de basura) -->
+            <button type="button" id="btnViewerDelete" class="btn-viewer-round btn-viewer-delete" title="Eliminar Foto">
+                <svg class="viewer-svg" viewBox="0 0 24 24">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -289,6 +319,13 @@
         </div>
     </div>
 
+    <!-- SVG reutilizable del tacho para la grilla de miniaturas -->
+    <svg style="display: none;">
+        <g id="trashIcon">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+        </g>
+    </svg>
+
     <script>
         // --- GENERADOR DE LLUVIA DE PAPELITOS ---
         const confettiBag = document.getElementById('confettiBag');
@@ -306,7 +343,7 @@
         }
 
         let listaFotosAcumuladas = []; 
-        let fotoSeleccionadaIndex = null; // Para rastrear qué foto está mirando en grande
+        let fotoSeleccionadaIndex = null; 
 
         const fileInput = document.getElementById('fotos');
         const fileCounter = document.getElementById('fileCounter');
@@ -319,12 +356,11 @@
         const loadingText = document.getElementById('loadingText');
         const realProgressBar = document.getElementById('realProgressBar');
 
-        // Elementos del nuevo visor
         const imageViewer = document.getElementById('imageViewer');
         const viewerImg = document.getElementById('viewerImg');
         const btnViewerDelete = document.getElementById('btnViewerDelete');
 
-        // ⚠️ DEJA PUESTA ACÁ LA URL DE TU SCRIPT PARA EL PÚBLICO GENERAL
+        // ⚠️ ENLACE DE TU SCRIPT SCRIPT GOOGLE APPS SÚPER IMPORTANTE
         const WEB_APP_URL = "ACA_VA_EL_URL_DE_TU_NUEVO_SCRIPT"; 
 
         function mostrarAlerta(titulo, mensaje) {
@@ -335,7 +371,6 @@
 
         function cerrarAlerta() { document.getElementById('customAlert').style.display = 'none'; }
 
-        // Funciones del Visor
         function abrirVisor(index) {
             fotoSeleccionadaIndex = index;
             viewerImg.src = URL.createObjectURL(listaFotosAcumuladas[index]);
@@ -386,19 +421,21 @@
                 const item = document.createElement('div');
                 item.classList.add('preview-item');
                 
-                // Al hacer clic en la foto, se abre el visor en grande
                 item.addEventListener('click', (e) => {
-                    if(e.target.classList.contains('btn-remove')) return; 
+                    if(e.target.closest('.btn-remove')) return; 
                     abrirVisor(index);
                 });
 
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file); 
                 
+                // Botón de eliminar con icono vectorial de tacho
                 const btnRemove = document.createElement('button');
-                btnRemove.type = 'button'; btnRemove.classList.add('btn-remove'); btnRemove.textContent = 'X';
+                btnRemove.type = 'button'; btnRemove.classList.add('btn-remove');
+                btnRemove.innerHTML = `<svg class="trash-svg" viewBox="0 0 24 24"><use href="#trashIcon"></use></svg>`;
+                
                 btnRemove.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Evita que se abra el visor al borrar desde la grilla
+                    e.stopPropagation(); 
                     listaFotosAcumuladas.splice(index, 1); renderizarMosaico(); actualizarInterfazContador();
                 });
                 
@@ -482,7 +519,7 @@
                     realProgressBar.style.width = `${porcentajeProgreso}%`;
                 }
 
-                // --- 🌟 CAMBIO DE FRASE COMERCIAL: MÁS EMOCIONAL Y CÁLIDA 🌟 ---
+                // --- NUEVA FRASE EXACTA PEDIDA ---
                 mostrarAlerta(
                     '¡Recibimos todo impecable! ❤️', 
                     `¡Excelente! Las ${totalFotos} fotitos para homenajear a "${papa}" ya se guardaron de manera segura en nuestro taller de diseño.\n\n` +
