@@ -11,6 +11,7 @@
             --oscuro: #1A1A1A;
             --blanco: #FFFFFF;
             --texto-input: #0D233A;
+            --whatsapp-green: #25D366;
         }
 
         * {
@@ -162,7 +163,6 @@
 
         .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        /* BOTÓN DE TACHO ANIMADO EN LA GRILLA */
         .preview-item .btn-remove {
             position: absolute; top: 5px; right: 5px; background-color: rgba(220, 53, 69, 0.95);
             color: white; border: 1px solid white; width: 26px; height: 26px;
@@ -183,6 +183,27 @@
         }
 
         .btn-submit:disabled { background: #CCCCCC !important; border-bottom-color: #999999 !important; color: #666666; cursor: not-allowed; }
+
+        /* NUEVO APARTADO CONTEXTUAL DE AYUDA DEBAJO DEL BOTÓN */
+        .form-help-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--blanco);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .form-help-link a {
+            color: #FFE066;
+            text-decoration: none;
+            border-bottom: 1px dashed #FFE066;
+            padding-bottom: 1px;
+            transition: color 0.2s ease;
+        }
+        .form-help-link a:hover {
+            color: var(--blanco);
+            border-bottom-color: var(--blanco);
+        }
 
         .overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -206,7 +227,6 @@
         .alert-box p { color: white; font-size: 13px; line-height: 1.5; margin-bottom: 20px; white-space: pre-line; }
         .alert-btn { background: linear-gradient(135deg, #FFE066, var(--dorado)); color: var(--oscuro); border: none; padding: 10px 22px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-        /* ESTILOS DEL VISOR GRANDE CON NUEVOS BOTONES ICONOGRÁFICOS */
         .viewer-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column;
@@ -221,19 +241,63 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .btn-viewer-round:active { transform: scale(0.9); }
-
         .btn-viewer-close { background-color: #6c757d; border: 1px solid rgba(255,255,255,0.2); }
         .btn-viewer-close:hover { transform: scale(1.08); background-color: #5a6268; }
-        
         .btn-viewer-delete { background-color: #dc3545; border: 1px solid rgba(255,255,255,0.2); }
         .btn-viewer-delete:hover { transform: scale(1.08) rotate(-5deg); background-color: #bd2130; }
-
         .viewer-svg { width: 22px; height: 22px; fill: white; }
+
+        /* ESTILOS EXCLUSIVOS DEL BOTÓN FLOTANTE DE WHATSAPP */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--whatsapp-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            z-index: 1500;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.08);
+        }
+        .whatsapp-float:active {
+            transform: scale(0.95);
+        }
+        .whatsapp-icon-svg {
+            width: 34px;
+            height: 34px;
+            fill: white;
+        }
+
+        /* Animación de pulso discreto alrededor del botón flotante */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
     </style>
 </head>
 <body>
 
     <div class="confetti-container" id="confettiBag"></div>
+
+    <a href="https://wa.me/5493875776632?text=%C2%A1Hola%20Altex%21%20Estoy%20en%20la%20app%20y%20tengo%20una%20consulta%20general." 
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       title="¿Necesitás ayuda? Contactanos">
+        <svg class="whatsapp-icon-svg" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397 0 11.945 0c3.171.001 6.152 1.234 8.394 3.477 2.242 2.242 3.473 5.223 3.472 8.395-.003 6.599-5.34 11.948-11.886 11.948-2.006-.001-3.978-.507-5.731-1.473L0 24zm6.59-4.846c1.657.983 3.284 1.492 4.904 1.494 5.332 0 9.67-4.321 9.672-9.63.001-2.573-1.002-4.992-2.824-6.815-1.821-1.821-4.24-2.822-6.811-2.823-5.339 0-9.678 4.321-9.68 9.631-.001 1.691.464 3.344 1.343 4.793l-.986 3.601 3.682-.951zm11.23-4.1c-.279-.14-.1.494-.613-.764-.13-.317-.43-.523-.744-.523h-.425c-.2 0-.395.064-.56.183l-.744.543c-.15.11-.341.144-.518.09-.76-.233-1.48-.611-2.128-1.114-.544-.423-1.01-.933-1.383-1.512-.1-.157-.105-.357-.01-.518l.452-.773c.1-.17.118-.376.049-.561l-.634-1.704c-.11-.29-.392-.479-.702-.479h-.462c-.41 0-.783.226-.962.593-.654 1.336-.81 2.87-.437 4.306.44 1.694 1.385 3.21 2.71 4.346 1.155.992 2.531 1.692 4.022 2.046.471.11.954.165 1.437.165.94 0 1.865-.213 2.71-.627.388-.19.626-.583.611-1.014l-.045-.964c-.015-.316-.205-.595-.494-.739z"/>
+        </svg>
+    </a>
 
     <div class="container">
         <div class="header">
@@ -279,20 +343,26 @@
             </div>
 
             <button type="submit" id="submitBtn" class="btn-submit" disabled>Enviar Fotos</button>
+
+            <div class="form-help-link">
+                ¿Dudas con el pago, envío o calidad? 
+                <a href="https://wa.me/5493875776632?text=Hola%20Altex%21%20Tengo%20una%20duda%20sobre%20las%20figuritas%2C%20el%20pago%20o%20la%20calidad%20de%20impresi%C3%B3n." 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                   Consultanos por WhatsApp
+                </a>
+            </div>
         </form>
     </div>
 
-    <!-- VISOR INTERACTIVO EN PANTALLA COMPLETA CON ICONOS REDONDOS -->
     <div id="imageViewer" class="viewer-overlay">
         <img id="viewerImg" class="viewer-img" src="" alt="Vista previa grande">
         <div class="viewer-actions">
-            <!-- Botón de regresar (Flecha) -->
             <button type="button" class="btn-viewer-round btn-viewer-close" onclick="cerrarVisor()" title="Regresar">
                 <svg class="viewer-svg" viewBox="0 0 24 24">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                 </svg>
             </button>
-            <!-- Botón de eliminar (Tacho de basura) -->
             <button type="button" id="btnViewerDelete" class="btn-viewer-round btn-viewer-delete" title="Eliminar Foto">
                 <svg class="viewer-svg" viewBox="0 0 24 24">
                     <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -319,7 +389,6 @@
         </div>
     </div>
 
-    <!-- SVG reutilizable del tacho para la grilla de miniaturas -->
     <svg style="display: none;">
         <g id="trashIcon">
             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -327,21 +396,6 @@
     </svg>
 
     <script>
-        // --- GENERADOR DE LLUVIA DE PAPELITOS ---
-        const confettiBag = document.getElementById('confettiBag');
-        const colores = ['#75AADB', '#FFFFFF', '#D4AF37', '#5592cb', '#FFE066']; 
-        for (let i = 0; i < 50; i++) {
-            const papelito = document.createElement('div');
-            papelito.classList.add('confetti');
-            papelito.style.left = Math.random() * 100 + 'vw';
-            papelito.style.animationDuration = (Math.random() * 3 + 2) + 's'; 
-            papelito.style.animationDelay = Math.random() * 5 + 's';
-            papelito.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
-            papelito.style.width = Math.random() * 6 + 5 + 'px';
-            papelito.style.height = Math.random() * 10 + 6 + 'px';
-            confettiBag.appendChild(papelito);
-        }
-
         let listaFotosAcumuladas = []; 
         let fotoSeleccionadaIndex = null; 
 
@@ -360,7 +414,6 @@
         const viewerImg = document.getElementById('viewerImg');
         const btnViewerDelete = document.getElementById('btnViewerDelete');
 
-        // ⚠️ ENLACE DE TU SCRIPT SCRIPT GOOGLE APPS SÚPER IMPORTANTE
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxHr1OXlNRYTRrc7Wl4nLiwCfRncOD73nyJyEOiWbik5017SDQ6Lo24sG7dqrdilh9g/exec"; 
 
         function mostrarAlerta(titulo, mensaje) {
@@ -429,7 +482,6 @@
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file); 
                 
-                // Botón de eliminar con icono vectorial de tacho
                 const btnRemove = document.createElement('button');
                 btnRemove.type = 'button'; btnRemove.classList.add('btn-remove');
                 btnRemove.innerHTML = `<svg class="trash-svg" viewBox="0 0 24 24"><use href="#trashIcon"></use></svg>`;
@@ -519,7 +571,6 @@
                     realProgressBar.style.width = `${porcentajeProgreso}%`;
                 }
 
-                // --- NUEVA FRASE EXACTA PEDIDA ---
                 mostrarAlerta(
                     '¡Recibimos todo impecable! ❤️', 
                     `¡Excelente! Las ${totalFotos} fotitos para homenajear a "${papa}" ya se guardaron de manera segura en nuestro taller de diseño.\n\n` +
