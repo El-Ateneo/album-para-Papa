@@ -52,6 +52,7 @@
             100% { transform: translateY(105vh) rotate(720deg); }
         }
 
+        /* Contenedor transparente original intacto */
         .container {
             background-color: transparent; 
             width: 100%;
@@ -184,25 +185,76 @@
 
         .btn-submit:disabled { background: #CCCCCC !important; border-bottom-color: #999999 !important; color: #666666; cursor: not-allowed; }
 
-        /* NUEVO APARTADO CONTEXTUAL DE AYUDA DEBAJO DEL BOTÓN */
+        /* NUEVOS ELEMENTOS DE WHATSAPP CON RESPALDO TRASLÚCIDO ANTI-RUIDO */
         .form-help-link {
             text-align: center;
             margin-top: 16px;
+            margin-bottom: 5px;
             font-size: 13px;
             font-weight: 600;
+            line-height: 1.5;
+            background-color: rgba(0, 0, 0, 0.45); 
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--blanco);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            text-shadow: none;
         }
+
         .form-help-link a {
             color: #FFE066;
+            font-weight: 800;
             text-decoration: none;
-            border-bottom: 1px dashed #FFE066;
-            padding-bottom: 1px;
-            transition: color 0.2s ease;
+            border-bottom: 2px dashed #FFE066;
+            padding-bottom: 2px;
+            transition: all 0.2s ease;
+            display: inline-block;
         }
+
         .form-help-link a:hover {
             color: var(--blanco);
             border-bottom-color: var(--blanco);
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background-color: var(--whatsapp-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1500;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+        }
+
+        .whatsapp-float:active {
+            transform: scale(0.95);
+        }
+
+        .whatsapp-icon-svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
         .overlay {
@@ -241,48 +293,14 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .btn-viewer-round:active { transform: scale(0.9); }
+
         .btn-viewer-close { background-color: #6c757d; border: 1px solid rgba(255,255,255,0.2); }
         .btn-viewer-close:hover { transform: scale(1.08); background-color: #5a6268; }
+        
         .btn-viewer-delete { background-color: #dc3545; border: 1px solid rgba(255,255,255,0.2); }
         .btn-viewer-delete:hover { transform: scale(1.08) rotate(-5deg); background-color: #bd2130; }
+
         .viewer-svg { width: 22px; height: 22px; fill: white; }
-
-        /* ESTILOS EXCLUSIVOS DEL BOTÓN FLOTANTE DE WHATSAPP */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 60px;
-            height: 60px;
-            background-color: var(--whatsapp-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            z-index: 1500;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-            animation: pulse-ring 2s infinite ease-in-out;
-        }
-        .whatsapp-float:hover {
-            transform: scale(1.08);
-        }
-        .whatsapp-float:active {
-            transform: scale(0.95);
-        }
-        .whatsapp-icon-svg {
-            width: 34px;
-            height: 34px;
-            fill: white;
-        }
-
-        /* Animación de pulso discreto alrededor del botón flotante */
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
-            70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
     </style>
 </head>
 <body>
@@ -396,6 +414,21 @@
     </svg>
 
     <script>
+        // Lógica de Confetti Automática
+        const confettiBag = document.getElementById('confettiBag');
+        const colores = ['#75AADB', '#FFFFFF', '#D4AF37', '#5592cb', '#FFE066']; 
+        for (let i = 0; i < 50; i++) {
+            const papelito = document.createElement('div');
+            papelito.classList.add('confetti');
+            papelito.style.left = Math.random() * 100 + 'vw';
+            papelito.style.animationDuration = (Math.random() * 3 + 2) + 's'; 
+            papelito.style.animationDelay = Math.random() * 5 + 's';
+            papelito.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+            papelito.style.width = Math.random() * 6 + 5 + 'px';
+            papelito.style.height = Math.random() * 10 + 6 + 'px';
+            confettiBag.appendChild(papelito);
+        }
+
         let listaFotosAcumuladas = []; 
         let fotoSeleccionadaIndex = null; 
 
@@ -414,6 +447,7 @@
         const viewerImg = document.getElementById('viewerImg');
         const btnViewerDelete = document.getElementById('btnViewerDelete');
 
+        // TU URL EXACTA DE GOOGLE APPS SCRIPT
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxHr1OXlNRYTRrc7Wl4nLiwCfRncOD73nyJyEOiWbik5017SDQ6Lo24sG7dqrdilh9g/exec"; 
 
         function mostrarAlerta(titulo, mensaje) {
@@ -444,6 +478,7 @@
             }
         });
 
+        // Manejo y acumulación de fotos por tandas
         fileInput.addEventListener('change', function() {
             const nuevosArchivos = Array.from(this.files);
             const imagenesValidas = nuevosArchivos.filter(file => {
@@ -509,6 +544,7 @@
             }
         }
 
+        // Optimización del lado del cliente antes de subir
         function optimizarYComprimirFoto(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -536,6 +572,7 @@
             });
         }
 
+        // Subida iterativa progresiva real
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             realProgressBar.style.width = "0%";
